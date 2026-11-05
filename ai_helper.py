@@ -8,357 +8,542 @@ from openai import OpenAI
 load_dotenv()
 
 
-# -----------------------------------------
-# 1. GET VALUES FROM THE PROMPT
-# -----------------------------------------
+# =========================================
+# PROMPT HELPER
+# =========================================
 
 def get_prompt_value(prompt, field):
+    """Read a value such as 'Subject: Python' from a prompt."""
 
-    pattern = rf"^\s*{re.escape(field)}:\s*(.*?)\s*$"
+    pattern = rf"^\s*{re.escape(field)}:\s*(.+)$"
 
     match = re.search(
         pattern,
         prompt,
-        re.MULTILINE | re.IGNORECASE
+        re.IGNORECASE | re.MULTILINE
     )
 
-    return match.group(1).strip() if match else "Not provided"
+    return match.group(1).strip() if match else ""
 
 
-# -----------------------------------------
-# 2. FREE MOCK MODE
-# -----------------------------------------
+# =========================================
+# MOCK RESPONSE
+# =========================================
 
 def generate_mock_response(instructions, prompt):
+    """Generate sample educational content without API usage."""
 
-    subject = get_prompt_value(prompt, "Subject")
-    level = get_prompt_value(prompt, "Student Level")
-    topic = get_prompt_value(prompt, "Topic")
+    subject = get_prompt_value(prompt, "Subject") or "General"
+    level = get_prompt_value(prompt, "Student Level") or "Beginner"
+    topic = get_prompt_value(prompt, "Topic") or "Your topic"
 
     instruction_text = instructions.lower()
-    topic_lower = topic.lower()
 
-    heading = f"# {topic}\n\n"
+    if "notes" in instruction_text:
 
-    details = (
-        f"**Subject:** {subject}\n\n"
-        f"**Level:** {level}\n\n"
-        "**Mode:** Free Mock Mode\n\n"
-        "> Demonstration content for learning and testing.\n\n"
-    )
+        return f"""# {topic} — Study Notes
 
-    # -----------------------------------------
-    # PYTHON FUNCTIONS TOPIC
-    # -----------------------------------------
+**Subject:** {subject}
+**Student Level:** {level}
 
-    if "function" in topic_lower and "python" in subject.lower():
-
-        # QUIZ GENERATOR
-
-        if "quiz generator" in instruction_text:
-
-            content = """
-## Python Functions — Practice Quiz
-
-**1. Which keyword is used to define a function in Python?**
-
-A. function
-B. def
-C. create
-D. fun
-
-**Answer: B — def**
-
-**2. What is a function?**
-
-A. A reusable block of code
-B. A variable
-C. A loop
-D. A data type
-
-**Answer: A — A reusable block of code**
-
-**3. Which symbol is used after a function name?**
-
-A. ;
-B. ,
-C. ()
-D. []
-
-**Answer: C — ()**
-
-**4. What does `return` do?**
-
-A. Stops the computer
-B. Sends a result back from a function
-C. Creates a loop
-D. Prints a variable
-
-**Answer: B — Sends a result back**
-
-**5. What is a parameter?**
-
-A. An input variable in a function definition
-B. A Python error
-C. A comment
-D. A loop condition
-
-**Answer: A — An input variable**
-
-**6. What is the output of this code?**
-
-```python
-def add(a, b):
-    return a + b
-
-print(add(5, 3))
-```
-
-A. 53
-B. 8
-C. 5
-D. Error
-
-**Answer: B — 8**
-
-**7. Which function displays output?**
-
-A. input()
-B. print()
-C. return()
-D. def()
-
-**Answer: B — print()**
-
-**8. Can a function be called multiple times?**
-
-A. Yes
-B. No
-C. Only twice
-D. Only once
-
-**Answer: A — Yes**
-
-**9. What happens if a function has no return statement?**
-
-A. It returns None by default
-B. It always gives an error
-C. It returns zero
-D. It stops Python
-
-**Answer: A — It returns None**
-
-**10. Which is the correct function call?**
-
-A. call greet
-B. greet[]
-C. greet()
-D. def greet
-
-**Answer: C — greet()**
-"""
-
-        # NOTES GENERATOR
-
-        elif "notes generator" in instruction_text:
-
-            content = """
 ## 1. Introduction
 
-A function is a reusable block of Python code
-that performs a particular task.
+{topic} is an important concept in {subject}. These notes introduce the main ideas in a simple way.
 
-## 2. Important Definitions
+## 2. Key Definitions
 
-- **Function:** A reusable block of code.
-- **Parameter:** A variable written in a function definition.
-- **Argument:** The actual value passed when calling a function.
-- **Return:** Sends a result back from a function.
+- **Concept:** A basic idea or principle related to the topic.
+- **Syntax:** Rules used to write instructions in a programming language.
+- **Example:** A practical demonstration of an idea.
 
-## 3. Syntax
+## 3. Important Points
 
-```python
-def function_name():
-    # code
-    pass
-```
+- Understand the meaning of {topic}.
+- Learn important terms and rules.
+- Practise with small examples.
+- Review common mistakes.
 
 ## 4. Example
 
 ```python
-def greet():
-    print("Hello, Student!")
-
-greet()
+print("Learning {topic}")
 ```
 
-Output:
+## 5. Quick Revision
 
-```text
-Hello, Student!
-```
+- Know the definition.
+- Understand its purpose.
+- Practise writing examples.
 
-## 5. Function With Parameters
-
-```python
-def add(a, b):
-    return a + b
-
-result = add(10, 20)
-print(result)
-```
-
-Output: `30`
-
-## 6. Advantages
-
-- Reuses code.
-- Makes programs organized.
-- Reduces repeated code.
-- Makes debugging easier.
-
-## 7. Quick Revision
-
-- `def` defines a function.
-- `()` is used for parameters and function calls.
-- `return` sends a result back.
-- A function runs when it is called.
+> Mock Mode: This is sample study content.
 """
 
-        # EXPLAIN TOPIC
+    if "explain" in instruction_text or "educational assistant" in instruction_text:
 
-        else:
+        return f"""# Understanding {topic}
 
-            content = """
+**Subject:** {subject}
+**Level:** {level}
+
 ## 1. Introduction
 
-Python functions allow you to write reusable
-blocks of code.
+{topic} is a concept you can learn step by step.
 
 ## 2. Simple Explanation
 
-Imagine you have to perform the same calculation
-many times.
+In simple words, {topic} is a topic within {subject}. It helps you understand important ideas and apply them to practical problems.
 
-Instead of writing the same code repeatedly,
-you can create a function and call it whenever needed.
+## 3. Important Concepts
 
-## 3. Creating a Function
+- **Purpose:** Understand what problem the topic solves.
+- **Core idea:** Learn the basic rule or process.
+- **Practice:** Try small examples.
+
+## 4. Example
+
+```python
+print("Hello, {topic}!")
+```
+
+## 5. Summary
+
+- Learn the definition.
+- Understand the main concepts.
+- Practise with examples.
+
+> Mock Mode: This is sample content, not a live AI-generated explanation.
+"""
+
+    return f"""# {topic}
+
+**Subject:** {subject}
+**Student Level:** {level}
+
+This is sample content generated by StudyMate AI in Free Mock Mode.
+
+## Overview
+
+Start by learning the definition and purpose of {topic}.
+
+## Important Points
+
+1. Understand the basic definition.
+2. Learn important terms.
+3. Review an example.
+4. Practise independently.
+
+## Example
+
+```python
+print("Welcome to StudyMate AI")
+```
+
+## Summary
+
+Build your understanding step by step.
+
+> Mock Mode is active. This sample does not require API credits.
+"""
+
+
+# =========================================
+# CHAT TUTOR - MOCK MODE
+# =========================================
+
+def generate_mock_chat_response(message, history=None):
+    """
+    Generate sample chat responses without using API credits.
+
+    This mode is for testing the chat interface.
+    It does not provide unrestricted real AI answers.
+    """
+
+    question = message.strip()
+    lower_question = question.lower()
+
+    if not question:
+        return "Please enter a question so I can help you."
+
+    if any(word in lower_question for word in ["hello", "hi", "hey"]):
+
+        return """Hello! 👋 Welcome to StudyMate AI.
+
+I'm your study assistant.
+
+You can ask me about:
+- Python
+- NumPy and Pandas
+- Artificial Intelligence
+- Machine Learning
+- Data Science
+
+What would you like to learn today?"""
+
+    if "python" in lower_question:
+
+        return """# Python 🐍
+
+Python is a popular programming language used for:
+
+- Web development
+- Data analysis
+- Artificial Intelligence
+- Machine Learning
+- Automation
+
+## Example
+
+```python
+name = "Student"
+print("Hello", name)
+```
+
+**Explanation:**
+1. We create a variable called `name`.
+2. We store the text `"Student"` in it.
+3. `print()` displays the result.
+
+**Try asking:** What are Python variables?"""
+
+    if "numpy" in lower_question:
+
+        return """# NumPy
+
+NumPy is a Python library used for numerical calculations and working with arrays.
+
+## Example
+
+```python
+import numpy as np
+
+marks = np.array([80, 90, 75])
+
+print(marks.mean())
+```
+
+**Output:**
+```text
+81.6666666667
+```
+
+NumPy makes mathematical operations on arrays easier and faster.
+
+**Remember:** NumPy works mainly with numerical arrays."""
+
+    if "pandas" in lower_question:
+
+        return """# Pandas
+
+Pandas is a Python library used to organize, analyse and manipulate data.
+
+It is commonly used with tables called DataFrames.
+
+## Example
+
+```python
+import pandas as pd
+
+data = {
+    "Name": ["Rahul", "Amit"],
+    "Marks": [85, 90]
+}
+
+df = pd.DataFrame(data)
+
+print(df)
+```
+
+Pandas is useful for:
+- Reading CSV files
+- Cleaning data
+- Analysing student marks
+- Working with tables
+
+**Remember:** Pandas works mainly with structured data."""
+
+    if "machine learning" in lower_question:
+
+        return """# Machine Learning 🤖
+
+Machine Learning is a branch of Artificial Intelligence.
+
+It allows computers to learn patterns from data and make predictions.
+
+## Simple Example
+
+Imagine giving a computer information about houses:
+
+- Size
+- Number of rooms
+- Location
+- Price
+
+After learning from examples, it can estimate the price of another house.
+
+## Three Main Types
+
+1. Supervised Learning
+2. Unsupervised Learning
+3. Reinforcement Learning
+
+**Remember:** Machine Learning learns patterns from data."""
+
+    if "artificial intelligence" in lower_question or lower_question.strip() == "ai":
+
+        return """# Artificial Intelligence
+
+Artificial Intelligence (AI) is a field of computer science that focuses on creating systems that can perform tasks requiring human-like intelligence.
+
+## Examples
+
+- ChatGPT
+- Voice assistants
+- Image recognition
+- Recommendation systems
+- Self-driving technology
+
+## Main Areas
+
+- Machine Learning
+- Deep Learning
+- Natural Language Processing
+- Computer Vision
+
+**Remember:** AI is the broader field; Machine Learning is one part of AI."""
+
+    if "loop" in lower_question:
+
+        return """# Python Loops
+
+Loops repeat a block of code multiple times.
+
+Python has two common types:
+
+1. `for` loop
+2. `while` loop
+
+## Example
+
+```python
+for i in range(5):
+    print(i)
+```
+
+**Output:**
+
+```text
+0
+1
+2
+3
+4
+```
+
+The loop runs five times.
+
+**Remember:** Loops help avoid writing the same code repeatedly."""
+
+    if "function" in lower_question:
+
+        return """# Python Functions
+
+A function is a reusable block of code that performs a specific task.
+
+## Example
 
 ```python
 def greet():
-    print("Hello, Student!")
+    print("Hello Student")
 
 greet()
 ```
 
-Output:
+**Explanation:**
 
-```text
-Hello, Student!
-```
+1. `def` creates a function.
+2. `greet` is its name.
+3. The indented line is the function body.
+4. `greet()` calls the function.
 
-## 4. Function With Inputs
+**Remember:** Functions help organize and reuse code."""
+
+    if "variable" in lower_question:
+
+        return """# Python Variables
+
+A variable is a name used to store a value.
+
+## Example
 
 ```python
-def add(a, b):
-    return a + b
+name = "Rahul"
+age = 20
+marks = 85
 
-print(add(10, 20))
+print(name)
+print(age)
+print(marks)
 ```
 
-Output: `30`
+Python automatically identifies the data type in many cases.
 
-Here:
+**Remember:** Variables help store and use information."""
 
-- `def` creates the function.
-- `a` and `b` are parameters.
-- `return` sends back the answer.
-- `add(10, 20)` calls the function.
+    if "list" in lower_question:
 
-## 5. Real-Life Example
+        return """# Python Lists
 
-A calculator has different operations.
+A list stores multiple values in one variable.
 
-You can create separate functions for addition,
-subtraction, multiplication and division.
+## Example
 
-## 6. Summary
+```python
+fruits = ["Apple", "Banana", "Mango"]
 
-Functions make Python programs reusable,
-organized and easier to maintain.
+print(fruits[0])
+```
+
+**Output:**
+```text
+Apple
+```
+
+List positions start from index `0`.
+
+You can add, remove and update list items.
+
+**Remember:** Lists are ordered and mutable collections."""
+
+    if "thank" in lower_question:
+
+        return "You're welcome! 😊 Keep learning with StudyMate AI. Ask me another study question whenever you're ready."
+
+    return f"""# StudyMate AI — Mock Tutor
+
+You asked:
+
+**{question}**
+
+I'm currently running in Free Mock Mode.
+
+I can demonstrate educational answers for Python, NumPy, Pandas, Machine Learning, Artificial Intelligence, loops, functions, variables and lists.
+
+For unrestricted answers to new questions, we'll connect the OpenAI API in a future upgrade.
+
+**Try asking:** Explain Python functions with an example.
+
+> This is a predefined demonstration response, not a live AI answer.
 """
 
-    # -----------------------------------------
-    # OTHER TOPICS
-    # -----------------------------------------
 
-    else:
+# =========================================
+# CHAT RESPONSE
+# =========================================
 
-        content = f"""
-## Introduction
+def generate_chat_response(message, history=None):
+    """
+    Generate a chat response using Mock Mode or Live Mode.
 
-This is a basic demonstration for **{topic}**.
-
-## What to Learn
-
-- Understand the meaning of {topic}.
-- Learn its important concepts.
-- Study examples related to {subject}.
-- Practice writing small programs.
-
-## Practice
-
-Try finding one real-world example of {topic}.
-
-## Summary
-
-This is a general mock template.
-Topic-specific explanations are currently available
-for Python Functions.
-"""
-
-    return heading + details + content
-
-
-# -----------------------------------------
-# 3. GENERATE RESPONSE
-# -----------------------------------------
-
-def generate_response(instructions, prompt):
+    history contains previous messages:
+    [{"role": "user", "content": "..."},
+     {"role": "assistant", "content": "..."}]
+    """
 
     mode = os.getenv("STUDYMATE_MODE", "mock").strip().lower()
 
-    # FREE MOCK MODE
+    if mode == "mock":
+
+        return generate_mock_chat_response(message, history)
+
+    if mode != "live":
+
+        raise ValueError(
+            "Invalid STUDYMATE_MODE. Choose 'mock' or 'live'."
+        )
+
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+
+    if not api_key or api_key == "your_api_key_here":
+
+        raise ValueError(
+            "OPENAI_API_KEY is missing. Add a valid key to your private .env file."
+        )
+
+    client = OpenAI(api_key=api_key)
+
+    conversation = []
+
+    for item in (history or [])[-12:]:
+
+        if item.get("role") in ["user", "assistant"]:
+
+            conversation.append({
+                "role": item["role"],
+                "content": item["content"]
+            })
+
+    conversation.append({
+        "role": "user",
+        "content": message
+    })
+
+    response = client.responses.create(
+        model=os.getenv("OPENAI_MODEL", "gpt-5.5"),
+        instructions="""
+        You are StudyMate AI, a friendly and patient educational tutor.
+
+        Help students understand topics in simple language.
+
+        Follow these rules:
+        1. Explain concepts step by step.
+        2. Use examples where useful.
+        3. Explain programming code clearly.
+        4. Ask helpful follow-up questions when appropriate.
+        5. Adapt explanations to the student's level.
+        6. Use Markdown headings, lists and code blocks.
+        7. If you are unsure about a fact, say so.
+        """,
+        input=conversation
+    )
+
+    return response.output_text
+
+
+# =========================================
+# EXISTING EXPLANATION / NOTES RESPONSE
+# =========================================
+
+def generate_response(instructions, prompt):
+    """
+    Generate content using Free Mock Mode or OpenAI API.
+    """
+
+    mode = os.getenv("STUDYMATE_MODE", "mock").strip().lower()
 
     if mode == "mock":
 
-        return generate_mock_response(
-            instructions,
-            prompt
-        )
+        return generate_mock_response(instructions, prompt)
 
-    # LIVE AI MODE
-
-    elif mode == "live":
-
-        api_key = os.getenv("OPENAI_API_KEY")
-
-        if not api_key:
-            raise ValueError("OpenAI API key is missing.")
-
-        client = OpenAI(api_key=api_key)
-
-        response = client.responses.create(
-            model="gpt-5.5",
-            instructions=instructions,
-            input=prompt
-        )
-
-        return response.output_text
-
-    else:
+    if mode != "live":
 
         raise ValueError(
-            "Choose mock or live mode in .env"
+            "Invalid STUDYMATE_MODE. Choose 'mock' or 'live' in your .env file."
         )
+
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+
+    if not api_key or api_key == "your_api_key_here":
+
+        raise ValueError(
+            "OPENAI_API_KEY is missing. Add a valid API key to your private .env file."
+        )
+
+    client = OpenAI(api_key=api_key)
+
+    response = client.responses.create(
+        model=os.getenv("OPENAI_MODEL", "gpt-5.5"),
+        instructions=instructions,
+        input=prompt
+    )
+
+    return response.output_text

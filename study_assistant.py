@@ -1,26 +1,25 @@
 from ai_helper import generate_response
 
-def explain_topic(subject, topic, level):
-    instruction = """"
-    You are StudyMate AI, a fridenly educational tutor.
 
-    Explain topic accurately using language suitable
-    for the student's learning level.
-
-
-    Include:
-    1.A simple defination
-    2.A step-by-step explanation
-    3.A practical example
-    4.A short summary
-    """
+def explain_topic(subject, level, topic):
+    instructions = """
+You are StudyMate AI, a friendly educational assistant.
+Explain concepts in simple language suitable for the student's level.
+Use accurate information, examples, and step-by-step explanations.
+"""
 
     prompt = f"""
-    subject: {subject}
-    topic: {topic}
-    level: {level}
+Subject: {subject}
+Student Level: {level}
+Topic: {topic}
 
-    Explain this topic so the student can understand it easily.
-    """
+Explain this topic in an easy-to-understand way.
+Include:
+1. Introduction
+2. Simple explanation
+3. Important concepts
+4. Real-life or practical examples
+5. Summary
+"""
 
-    return generate_response(instruction, prompt)    
+    return generate_response(instructions, prompt)

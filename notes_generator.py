@@ -1,27 +1,25 @@
 from ai_helper import generate_response
 
-def explain_topic(subject, topic, level):
-    instruction = """
-    You are StudyMate AI, an educational notes generator.
 
-    Create accurate, organized study notes appropriate
-    for the student's learning level.
-
-
-    Include:
-    1. Defination
-    2. Important points
-    3. key points
-    4. Example
-    5. Short revision summary
-    """
+def generate_notes(subject, level, topic):
+    instructions = """
+You are StudyMate AI Notes Generator.
+Create clear, organized, accurate and useful study notes.
+Use headings, bullet points, definitions and examples.
+"""
 
     prompt = f"""
-    subject: {subject}
-    topic: {topic}
-    level: {level}
+Subject: {subject}
+Student Level: {level}
+Topic: {topic}
 
-    Generate useful revision notes for this topic.
-    """
+Generate study notes containing:
+1. Topic introduction
+2. Important definitions
+3. Key points
+4. Examples
+5. Advantages and disadvantages, if relevant
+6. Short revision summary
+"""
 
-    return generate_response(instruction, prompt)
+    return generate_response(instructions, prompt)
