@@ -8,7 +8,12 @@ from openai import OpenAI
 load_dotenv()
 
 
+# -----------------------------------------
+# 1. GET VALUES FROM THE PROMPT
+# -----------------------------------------
+
 def get_prompt_value(prompt, field):
+
     pattern = rf"^\s*{re.escape(field)}:\s*(.*?)\s*$"
 
     match = re.search(
@@ -17,8 +22,12 @@ def get_prompt_value(prompt, field):
         re.MULTILINE | re.IGNORECASE
     )
 
-    return match.group(1).strip() if match else "Unknown"
+    return match.group(1).strip() if match else "Not provided"
 
+
+# -----------------------------------------
+# 2. FREE MOCK MODE
+# -----------------------------------------
 
 def generate_mock_response(instructions, prompt):
 
@@ -27,141 +36,309 @@ def generate_mock_response(instructions, prompt):
     topic = get_prompt_value(prompt, "Topic")
 
     instruction_text = instructions.lower()
+    topic_lower = topic.lower()
 
     heading = f"# {topic}\n\n"
+
     details = (
         f"**Subject:** {subject}\n\n"
         f"**Level:** {level}\n\n"
         "**Mode:** Free Mock Mode\n\n"
-        "---\n\n"
+        "> Demonstration content for learning and testing.\n\n"
     )
 
-    if "quiz generator" in instruction_text:
+    # -----------------------------------------
+    # PYTHON FUNCTIONS TOPIC
+    # -----------------------------------------
 
-        content = f"""
-## Quiz: {topic}
+    if "function" in topic_lower and "python" in subject.lower():
 
-Here are 5 sample questions for practice.
+        # QUIZ GENERATOR
 
-**1. What is {topic} mainly used for?**
+        if "quiz generator" in instruction_text:
 
-A. Understanding and solving a relevant problem  
-B. Making a computer heavier  
-C. Increasing screen brightness  
-D. Replacing the operating system  
+            content = """
+## Python Functions — Practice Quiz
 
-**2. Which is the best way to learn {topic}?**
+**1. Which keyword is used to define a function in Python?**
 
-A. Avoid examples  
-B. Practice with examples  
-C. Skip the basics  
-D. Memorize without understanding  
+A. function
+B. def
+C. create
+D. fun
 
-**3. What should a beginner understand first?**
+**Answer: B — def**
 
-A. Advanced techniques  
-B. Basic concepts  
-C. Complex projects only  
-D. Nothing about the topic  
+**2. What is a function?**
 
-**4. Why is practical knowledge important?**
+A. A reusable block of code
+B. A variable
+C. A loop
+D. A data type
 
-A. It helps apply concepts  
-B. It removes all errors  
-C. It replaces learning  
-D. It stops development  
+**Answer: A — A reusable block of code**
 
-**5. What helps improve your understanding?**
+**3. Which symbol is used after a function name?**
 
-A. Regular practice  
-B. Avoiding questions  
-C. Skipping revision  
-D. Never testing code  
+A. ;
+B. ,
+C. ()
+D. []
 
-### Demo Answer Key
+**Answer: C — ()**
 
-1. A
-2. B
-3. B
-4. A
-5. A
+**4. What does `return` do?**
 
-*These are general demonstration questions, not verified topic-specific quiz questions.*
+A. Stops the computer
+B. Sends a result back from a function
+C. Creates a loop
+D. Prints a variable
+
+**Answer: B — Sends a result back**
+
+**5. What is a parameter?**
+
+A. An input variable in a function definition
+B. A Python error
+C. A comment
+D. A loop condition
+
+**Answer: A — An input variable**
+
+**6. What is the output of this code?**
+
+```python
+def add(a, b):
+    return a + b
+
+print(add(5, 3))
+```
+
+A. 53
+B. 8
+C. 5
+D. Error
+
+**Answer: B — 8**
+
+**7. Which function displays output?**
+
+A. input()
+B. print()
+C. return()
+D. def()
+
+**Answer: B — print()**
+
+**8. Can a function be called multiple times?**
+
+A. Yes
+B. No
+C. Only twice
+D. Only once
+
+**Answer: A — Yes**
+
+**9. What happens if a function has no return statement?**
+
+A. It returns None by default
+B. It always gives an error
+C. It returns zero
+D. It stops Python
+
+**Answer: A — It returns None**
+
+**10. Which is the correct function call?**
+
+A. call greet
+B. greet[]
+C. greet()
+D. def greet
+
+**Answer: C — greet()**
 """
 
-    elif "notes generator" in instruction_text:
+        # NOTES GENERATOR
 
-        content = f"""
+        elif "notes generator" in instruction_text:
+
+            content = """
 ## 1. Introduction
 
-{topic} is the topic you selected to study in {subject}.
+A function is a reusable block of Python code
+that performs a particular task.
 
-## 2. Basic Understanding
+## 2. Important Definitions
 
-Start by understanding the meaning and purpose of {topic}.
+- **Function:** A reusable block of code.
+- **Parameter:** A variable written in a function definition.
+- **Argument:** The actual value passed when calling a function.
+- **Return:** Sends a result back from a function.
 
-## 3. Important Concepts
+## 3. Syntax
 
-- Learn the basic definition.
-- Understand the main concepts.
-- Study how the topic works.
-- Explore practical examples.
+```python
+def function_name():
+    # code
+    pass
+```
 
-## 4. Examples
+## 4. Example
 
-Find or create a simple example related to {topic}.
+```python
+def greet():
+    print("Hello, Student!")
 
-## 5. Advantages
+greet()
+```
 
-- Helps develop subject knowledge.
-- Builds practical understanding.
-- Supports further learning.
+Output:
 
-## 6. Quick Revision
+```text
+Hello, Student!
+```
 
-Review the definition, key concepts, and examples of {topic}.
+## 5. Function With Parameters
 
-*These are demonstration notes, not verified topic-specific notes.*
+```python
+def add(a, b):
+    return a + b
+
+result = add(10, 20)
+print(result)
+```
+
+Output: `30`
+
+## 6. Advantages
+
+- Reuses code.
+- Makes programs organized.
+- Reduces repeated code.
+- Makes debugging easier.
+
+## 7. Quick Revision
+
+- `def` defines a function.
+- `()` is used for parameters and function calls.
+- `return` sends a result back.
+- A function runs when it is called.
 """
+
+        # EXPLAIN TOPIC
+
+        else:
+
+            content = """
+## 1. Introduction
+
+Python functions allow you to write reusable
+blocks of code.
+
+## 2. Simple Explanation
+
+Imagine you have to perform the same calculation
+many times.
+
+Instead of writing the same code repeatedly,
+you can create a function and call it whenever needed.
+
+## 3. Creating a Function
+
+```python
+def greet():
+    print("Hello, Student!")
+
+greet()
+```
+
+Output:
+
+```text
+Hello, Student!
+```
+
+## 4. Function With Inputs
+
+```python
+def add(a, b):
+    return a + b
+
+print(add(10, 20))
+```
+
+Output: `30`
+
+Here:
+
+- `def` creates the function.
+- `a` and `b` are parameters.
+- `return` sends back the answer.
+- `add(10, 20)` calls the function.
+
+## 5. Real-Life Example
+
+A calculator has different operations.
+
+You can create separate functions for addition,
+subtraction, multiplication and division.
+
+## 6. Summary
+
+Functions make Python programs reusable,
+organized and easier to maintain.
+"""
+
+    # -----------------------------------------
+    # OTHER TOPICS
+    # -----------------------------------------
 
     else:
 
         content = f"""
-## 1. Introduction
+## Introduction
 
-Welcome to your lesson about {topic}!
+This is a basic demonstration for **{topic}**.
 
-## 2. Basic Understanding
+## What to Learn
 
-First, understand what {topic} means and why it is useful in {subject}.
+- Understand the meaning of {topic}.
+- Learn its important concepts.
+- Study examples related to {subject}.
+- Practice writing small programs.
 
-## 3. Important Concepts
+## Practice
 
-- Learn the basic definition of {topic}.
-- Understand its purpose.
-- Explore its main concepts.
-- Practice using simple examples.
+Try finding one real-world example of {topic}.
 
-## 4. Practical Learning
+## Summary
 
-Try a beginner-level exercise related to {topic}.
-
-## 5. Summary
-
-Review the key concepts and practice regularly.
-
-*This is demonstration content, not a complete verified explanation of {topic}.*
+This is a general mock template.
+Topic-specific explanations are currently available
+for Python Functions.
 """
 
     return heading + details + content
 
 
+# -----------------------------------------
+# 3. GENERATE RESPONSE
+# -----------------------------------------
+
 def generate_response(instructions, prompt):
 
     mode = os.getenv("STUDYMATE_MODE", "mock").strip().lower()
 
+    # FREE MOCK MODE
+
     if mode == "mock":
-        return generate_mock_response(instructions, prompt)
+
+        return generate_mock_response(
+            instructions,
+            prompt
+        )
+
+    # LIVE AI MODE
 
     elif mode == "live":
 
@@ -181,6 +358,7 @@ def generate_response(instructions, prompt):
         return response.output_text
 
     else:
+
         raise ValueError(
-            "Invalid STUDYMATE_MODE. Use mock or live."
+            "Choose mock or live mode in .env"
         )
