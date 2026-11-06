@@ -7,7 +7,6 @@ from notes_generator import generate_notes
 from quiz_generation import get_quiz_questions
 from pdf_generator import generate_notes_pdf
 from ai_helper import generate_chat_response
-
 from career_roadmap import (
     generate_roadmap,
     CAREER_CATEGORIES,
@@ -24,7 +23,7 @@ st.set_page_config(
     page_title="StudyMate AI",
     page_icon="🎓",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -34,82 +33,92 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-#MainMenu, footer, header {
-    visibility: hidden;
-}
-
-[data-testid="stSidebar"],
-[data-testid="collapsedControl"] {
-    display: none;
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
 }
 
 .stApp {
     background:
-        radial-gradient(circle at top left, #172554 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #312e81 0%, transparent 30%),
-        #080d1b;
-    color: #f8fafc;
+        radial-gradient(circle at 10% 10%, #25205b 0%, transparent 35%),
+        radial-gradient(circle at 90% 20%, #24205a 0%, transparent 35%),
+        linear-gradient(135deg, #090d1b, #11152b 55%, #0a1020);
+    color: #f5f5ff;
+}
+
+header[data-testid="stHeader"] {
+    background: transparent;
 }
 
 .block-container {
-    max-width: 1200px;
+    max-width: 1250px;
     padding-top: 2rem;
     padding-bottom: 4rem;
 }
 
-h1, h2, h3, h4 {
-    color: #f8fafc !important;
-    text-align: center;
+h1, h2, h3, p, label {
+    color: #f5f5ff;
 }
-
-p, label, li {
-    color: #cbd5e1;
-}
-
-/* HERO */
 
 .hero {
     text-align: center;
-    padding: 45px 15px 30px;
+    padding: 45px 15px 30px 15px;
 }
 
-.hero-title {
-    font-size: clamp(38px, 6vw, 64px);
-    font-weight: 900;
-    letter-spacing: -2px;
-    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+.hero-tag {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid #6659c9;
+    border-radius: 30px;
+    background: #211d48;
+    color: #c9c2ff;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 6vw, 62px);
+    font-weight: 800;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #ffffff, #b7aaff, #83d7ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.hero-subtitle {
-    color: #cbd5e1;
-    font-size: 18px;
-    margin-top: 12px;
+.hero p {
+    color: #b7bfd8;
+    font-size: 17px;
 }
 
-/* DASHBOARD CARDS */
+.section-heading {
+    text-align: center;
+    font-size: 27px;
+    font-weight: 750;
+    margin-top: 30px;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #aab3d0;
+    margin-bottom: 25px;
+}
 
 .feature-card {
-    background: linear-gradient(
-        145deg,
-        rgba(30, 41, 75, 0.95),
-        rgba(15, 23, 42, 0.95)
-    );
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: linear-gradient(145deg, #1c2340, #151a31);
+    border: 1px solid #343d62;
     border-radius: 20px;
-    padding: 28px 20px;
-    min-height: 190px;
+    padding: 28px 22px;
+    min-height: 225px;
     text-align: center;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+    transition: 0.25s ease;
 }
 
 .feature-card:hover {
-    transform: translateY(-9px) scale(1.02);
-    border-color: #818cf8;
-    box-shadow: 0 15px 35px rgba(99,102,241,0.25);
+    border-color: #8b7cff;
+    transform: translateY(-4px);
 }
 
 .feature-icon {
@@ -117,106 +126,95 @@ p, label, li {
     margin-bottom: 12px;
 }
 
-.feature-title {
-    color: white;
+.feature-card h3 {
     font-size: 21px;
-    font-weight: 800;
-    margin-bottom: 9px;
-}
-
-.feature-description {
-    color: #cbd5e1;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-/* BUTTONS */
-
-div.stButton > button,
-div[data-testid="stDownloadButton"] button,
-div[data-testid="stFormSubmitButton"] button {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    border-radius: 12px;
-    border: 1px solid rgba(129, 140, 248, 0.45);
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    color: white;
     font-weight: 700;
-    padding: 12px 15px;
-    transition: all 0.25s ease;
+    margin-bottom: 10px;
 }
 
-div.stButton > button:hover,
-div[data-testid="stDownloadButton"] button:hover {
-    transform: translateY(-2px);
-    border-color: #c4b5fd;
-    box-shadow: 0 7px 20px rgba(124,58,237,0.3);
-    color: white;
+.feature-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #b5bfd8;
 }
 
-/* INPUTS */
-
-div[data-testid="stTextInput"] input,
-div[data-testid="stTextArea"] textarea {
-    background: #111827;
-    color: white;
-    border: 1px solid #475569;
-    border-radius: 10px;
-    text-align: center;
-}
-
-div[data-testid="stTextInput"] label,
-div[data-testid="stTextArea"] label,
-div[data-testid="stSelectbox"] label,
-div[data-testid="stRadio"] > label {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-}
-
-div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-    background: #111827;
-    color: white;
-}
-
-div[data-testid="stRadio"] > div {
-    justify-content: center;
-    text-align: center;
-}
-
-div[data-testid="stMetric"] {
-    text-align: center;
-}
-
-div[data-testid="stCaptionContainer"] {
-    text-align: center;
-}
-
-/* PROGRESS */
-
-div[data-testid="stProgressBar"] > div > div {
-    background: linear-gradient(90deg, #6366f1, #ec4899);
-}
-
-/* SECTION CARDS */
-
-.section-card {
-    background: rgba(30, 41, 59, 0.7);
-    border: 1px solid rgba(148, 163, 184, 0.18);
+.small-card {
+    background: #171d35;
+    border: 1px solid #303957;
     border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 15px;
+    padding: 22px;
     text-align: center;
+    min-height: 130px;
 }
 
-.small-note {
-    color: #94a3b8;
+.small-card h3 {
+    font-size: 18px;
+}
+
+.small-card p {
+    color: #b5bfd8;
     font-size: 13px;
 }
 
+div.stButton > button {
+    border-radius: 12px;
+    min-height: 44px;
+    font-weight: 650;
+    border: 1px solid #7568e8;
+    background: linear-gradient(90deg, #6554d9, #8271f2);
+    color: white;
+    transition: 0.2s;
+}
+
+div.stButton > button:hover {
+    border-color: #a99eff;
+    background: linear-gradient(90deg, #7768ed, #9384ff);
+    color: white;
+}
+
+div.stDownloadButton > button {
+    border-radius: 10px;
+    background: #252d4b;
+    border: 1px solid #59658d;
+    color: white;
+}
+
+div[data-testid="stTextInput"] input,
+div[data-testid="stTextArea"] textarea {
+    background: #171e36;
+    color: white;
+    border: 1px solid #394568;
+    border-radius: 10px;
+}
+
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    background: #171e36;
+    color: white;
+    border-radius: 10px;
+}
+
+div[data-testid="stRadio"] label {
+    color: #e8eaff;
+}
+
+div[data-testid="stMetric"] {
+    background: #171e36;
+    border: 1px solid #343e61;
+    padding: 15px;
+    border-radius: 14px;
+}
+
+hr {
+    border-color: #343d5d;
+}
+
+footer {
+    visibility: hidden;
+}
+
+#MainMenu {
+    visibility: hidden;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -225,21 +223,23 @@ div[data-testid="stProgressBar"] > div > div {
 # SESSION STATE
 # =========================================
 
-defaults = {
+DEFAULTS = {
     "current_page": "Dashboard",
     "learning_mode": "Explain Topic",
-    "roadmap_result": "",
-    "roadmap_config": {},
-    "chat_history": [],
+    "learning_mode_selector": "Explain Topic",
+    "generated_notes": "",
+    "notes_config": None,
+    "explanation_result": "",
     "quiz_questions": [],
     "quiz_submitted": False,
-    "quiz_answers": {},
-    "quiz_topic": "",
-    "explanation_result": "",
-    "notes_result": "",
+    "quiz_config": None,
+    "chat_history": [],
+    "roadmap_result": "",
+    "roadmap_goal": "",
+    "roadmap_category": "",
 }
 
-for key, value in defaults.items():
+for key, value in DEFAULTS.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
@@ -249,51 +249,29 @@ for key, value in defaults.items():
 # =========================================
 
 def open_page(page, learning_mode=None):
-
     st.session_state.current_page = page
 
     if learning_mode:
         st.session_state.learning_mode = learning_mode
+        st.session_state.learning_mode_selector = learning_mode
 
     st.rerun()
 
 
-def back_to_home():
-
-    if st.button("← Back to Home", key="back_home"):
-        open_page("Dashboard")
+def back_to_dashboard():
+    open_page("Dashboard")
 
 
-# =========================================
-# HELPER FUNCTIONS
-# =========================================
+def page_header(title, description=""):
+    if st.button("← Back to Dashboard", key=f"back_{title}"):
+        back_to_dashboard()
 
-def show_result(result):
+    st.markdown(f"# {title}")
 
-    if result is None:
-        st.warning("No result was generated. Please try again.")
-        return
+    if description:
+        st.caption(description)
 
-    if isinstance(result, str):
-        st.markdown(result)
-    else:
-        st.write(result)
-
-
-def call_generator(function, argument_sets):
-
-    last_error = None
-
-    for args in argument_sets:
-
-        try:
-            return function(*args)
-
-        except TypeError as error:
-            last_error = error
-
-    if last_error:
-        raise last_error
+    st.divider()
 
 
 # =========================================
@@ -304,82 +282,123 @@ def dashboard():
 
     st.markdown("""
     <div class="hero">
-        <div class="hero-title">🎓 StudyMate AI</div>
-        <div class="hero-subtitle">
-            Your personal AI-powered learning companion
-        </div>
-        <p style="color:#94a3b8; margin-top:15px;">
-            Learn smarter • Practise better • Build your future
-        </p>
+        <div class="hero-tag">✨ YOUR AI-POWERED LEARNING PARTNER</div>
+        <h1>Welcome to StudyMate AI</h1>
+        <p>Learn smarter. Create notes. Test your knowledge. Build your future.</p>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown(
-        "<h3>Explore Your Learning Space</h3>",
+        '<div class="section-heading">What would you like to do today?</div>',
         unsafe_allow_html=True
     )
 
-    features = [
-        (
-            "📖", "Learning Studio",
-            "Understand topics and generate study notes.",
-            "Learning Studio", None
-        ),
-        (
-            "📄", "PDF Notes",
-            "Generate notes and download them as PDF.",
-            "Learning Studio", "Generate Notes"
-        ),
-        (
-            "🧠", "Interactive Quiz",
-            "Test your knowledge and check your score.",
-            "Learning Studio", "Generate Quiz"
-        ),
-        (
-            "💬", "Chat Tutor",
-            "Ask questions and learn through conversation.",
-            "Chat Tutor", None
-        ),
-        (
-            "🚀", "Career Roadmap",
-            "Explore career paths and track your progress.",
-            "Career Roadmap", None
-        ),
-        (
-            "ℹ️", "About StudyMate",
-            "Learn about StudyMate AI.",
-            "About", None
-        ),
+    st.markdown(
+        '<div class="section-subtitle">Choose a learning experience to get started.</div>',
+        unsafe_allow_html=True
+    )
+
+    main_features = [
+        {
+            "title": "Learning Studio",
+            "icon": "📚",
+            "description": "Understand topics, generate study notes and practise with interactive quizzes.",
+            "button": "Start Learning",
+            "page": "Learning Studio",
+            "mode": "Explain Topic",
+        },
+        {
+            "title": "PDF Notes",
+            "icon": "📄",
+            "description": "Create organised study notes and download them as PDF documents.",
+            "button": "Create Notes",
+            "page": "Learning Studio",
+            "mode": "Generate Notes",
+        },
+        {
+            "title": "Chat Tutor",
+            "icon": "🤖",
+            "description": "Ask questions and get explanations from your AI study companion.",
+            "button": "Open Chat Tutor",
+            "page": "Chat Tutor",
+            "mode": None,
+        },
     ]
 
-    for row_start in range(0, len(features), 3):
+    columns = st.columns(3, gap="large")
 
-        columns = st.columns(3, gap="large")
+    for index, feature in enumerate(main_features):
+        with columns[index]:
 
-        for column, feature in zip(
-            columns,
-            features[row_start:row_start + 3]
+            st.markdown(f"""
+            <div class="feature-card">
+                <div class="feature-icon">{feature['icon']}</div>
+                <h3>{feature['title']}</h3>
+                <p>{feature['description']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            if st.button(
+                feature["button"],
+                key=f"main_{feature['title']}",
+                use_container_width=True
+            ):
+                open_page(
+                    feature["page"],
+                    feature["mode"]
+                )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="section-heading">Explore More</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="section-subtitle">Tools to help you plan and grow.</div>',
+        unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns(2, gap="large")
+
+    with col1:
+        st.markdown("""
+        <div class="small-card">
+            <h3>🚀 Career Roadmap</h3>
+            <p>Explore career paths and create a step-by-step learning plan.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.button(
+            "Explore Career Roadmap",
+            key="career_dashboard",
+            use_container_width=True
         ):
+            open_page("Career Roadmap")
 
-            icon, title, description, page, mode = feature
+    with col2:
+        st.markdown("""
+        <div class="small-card">
+            <h3>ℹ️ About StudyMate AI</h3>
+            <p>Discover the features and purpose of your learning companion.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-            with column:
+        if st.button(
+            "About StudyMate AI",
+            key="about_dashboard",
+            use_container_width=True
+        ):
+            open_page("About")
 
-                st.markdown(f"""
-                <div class="feature-card">
-                    <div class="feature-icon">{icon}</div>
-                    <div class="feature-title">{title}</div>
-                    <div class="feature-description">
-                        {description}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-                if st.button(
-                    f"Open {title}",
-                    key=f"open_{title}"
-                ):
-                    open_page(page, mode)
+    st.markdown("""
+    <div style="text-align:center; color:#8792b3; font-size:13px;">
+        Made for curious minds 💜 | StudyMate AI
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # =========================================
@@ -388,12 +407,9 @@ def dashboard():
 
 def learning_studio():
 
-    back_to_home()
-
-    st.title("📖 Learning Studio")
-
-    st.write(
-        "Learn topics, generate notes and practise with quizzes."
+    page_header(
+        "📚 Learning Studio",
+        "Understand concepts, create notes and test your knowledge."
     )
 
     modes = [
@@ -402,593 +418,291 @@ def learning_studio():
         "Generate Quiz",
     ]
 
+    current_mode = st.session_state.learning_mode_selector
+
+    if current_mode not in modes:
+        current_mode = "Explain Topic"
+
     selected_mode = st.selectbox(
-        "Choose Learning Mode",
+        "Choose your learning tool",
         modes,
-        index=(
-            modes.index(st.session_state.learning_mode)
-            if st.session_state.learning_mode in modes
-            else 0
-        ),
+        index=modes.index(current_mode),
         key="learning_mode_selector"
     )
 
     st.session_state.learning_mode = selected_mode
 
-    st.divider()
+    st.markdown("### Learning Details")
 
-    subject = st.selectbox(
-        "Select Subject",
-        [
-            "Python",
-            "NumPy",
-            "Pandas",
-            "Artificial Intelligence",
-            "Machine Learning",
-            "Data Science",
-            "Web Development",
-            "Computer Science",
-            "Other",
-        ],
-        key="learning_subject"
-    )
+    col1, col2 = st.columns(2)
 
-    level = st.selectbox(
-        "Select Student Level",
-        ["Beginner", "Intermediate", "Advanced"],
-        key="learning_level"
-    )
+    with col1:
+        subject = st.text_input(
+            "Subject",
+            placeholder="Example: Python"
+        )
+
+    with col2:
+        level = st.selectbox(
+            "Student Level",
+            ["Beginner", "Intermediate", "Advanced"]
+        )
 
     topic = st.text_input(
-        "Enter Topic",
-        placeholder="Example: Python Functions",
-        key="learning_topic"
+        "Topic",
+        placeholder="Example: Python Functions"
     )
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # -------------------------------------
     # EXPLAIN TOPIC
+    # -------------------------------------
 
     if selected_mode == "Explain Topic":
 
-        if st.button("✨ Explain Topic", key="explain_button"):
+        if st.button("✨ Explain Topic", use_container_width=True):
 
-            if not topic.strip():
-
-                st.warning("Please enter a topic.")
+            if not subject.strip() or not topic.strip():
+                st.warning("Please enter both subject and topic.")
 
             else:
-
                 with st.spinner("Preparing your explanation..."):
 
                     try:
-
-                        result = call_generator(
-                            explain_topic,
-                            [
-                                (subject, level, topic),
-                                (subject, topic, level),
-                                (topic, subject, level),
-                                (topic,),
-                            ]
+                        result = explain_topic(
+                            subject,
+                            level,
+                            topic
                         )
 
                         st.session_state.explanation_result = result
 
                     except Exception as error:
-                        st.error(f"Error: {error}")
+                        st.error(
+                            f"Error type: {type(error).__name__}"
+                        )
+                        st.exception(error)
 
         if st.session_state.explanation_result:
+            st.markdown("### 📖 Your Explanation")
+            st.markdown(st.session_state.explanation_result)
 
-            st.divider()
-            show_result(st.session_state.explanation_result)
-
+    # -------------------------------------
     # GENERATE NOTES
+    # -------------------------------------
 
     elif selected_mode == "Generate Notes":
 
-        if st.button("📝 Generate Notes", key="notes_button"):
+        if st.button("📝 Generate Notes", use_container_width=True):
 
-            if not topic.strip():
-
-                st.warning("Please enter a topic.")
+            if not subject.strip() or not topic.strip():
+                st.warning("Please enter both subject and topic.")
 
             else:
-
-                with st.spinner("Generating your notes..."):
+                with st.spinner("Creating your notes..."):
 
                     try:
-
-                        result = call_generator(
-                            generate_notes,
-                            [
-                                (subject, level, topic),
-                                (subject, topic, level),
-                                (topic, subject, level),
-                                (topic,),
-                            ]
+                        result = generate_notes(
+                            subject,
+                            level,
+                            topic
                         )
 
-                        st.session_state.notes_result = result
-
-                    except Exception as error:
-                        st.error(f"Error: {error}")
-
-        notes_result = st.session_state.notes_result
-
-        if notes_result:
-
-            st.divider()
-            show_result(notes_result)
-
-            if isinstance(notes_result, str):
-
-                st.download_button(
-                    "⬇️ Download Notes as Markdown",
-                    data=notes_result,
-                    file_name="StudyMate_Notes.md",
-                    mime="text/markdown",
-                    key="download_notes_md"
-                )
-
-                try:
-
-                    pdf_file = generate_notes_pdf(
-                        notes_result,
-                        "StudyMate Notes",
-                        level,
-                        topic
-                    )
-
-                    if pdf_file:
-
-                        st.download_button(
-                            "📄 Download Notes as PDF",
-                            data=pdf_file,
-                            file_name="StudyMate_Notes.pdf",
-                            mime="application/pdf",
-                            key="download_notes_pdf"
-                        )
-
-                except Exception as error:
-                    st.info(f"PDF generation issue: {error}")
-
-    # GENERATE QUIZ
-
-    elif selected_mode == "Generate Quiz":
-
-        if st.button(
-            "🧠 Generate Quiz",
-            key="generate_quiz_button"
-        ):
-
-            if not topic.strip():
-
-                st.warning("Please enter a quiz topic.")
-
-            else:
-
-                with st.spinner("Preparing quiz questions..."):
-
-                    try:
-
-                        questions = call_generator(
-                            get_quiz_questions,
-                            [
-                                (subject, level, topic),
-                                (subject, topic, level),
-                                (topic, subject, level),
-                                (topic,),
-                            ]
-                        )
-
-                        if isinstance(questions, dict):
-                            questions = questions.get("questions", [])
-
-                        st.session_state.quiz_questions = questions or []
-                        st.session_state.quiz_submitted = False
-                        st.session_state.quiz_answers = {}
-                        st.session_state.quiz_topic = topic
-
-                    except Exception as error:
-                        st.error(f"Quiz error: {error}")
-
-        if st.session_state.quiz_questions:
-            display_quiz()
-
-
-# =========================================
-# INTERACTIVE QUIZ
-# =========================================
-
-def display_quiz():
-
-    questions = st.session_state.quiz_questions
-
-    st.divider()
-
-    st.subheader(
-        f"🧠 Quiz: {st.session_state.quiz_topic}"
-    )
-
-    if not st.session_state.quiz_submitted:
-
-        with st.form("quiz_form"):
-
-            for index, question in enumerate(questions):
-
-                question_text = question.get(
-                    "question",
-                    f"Question {index + 1}"
-                )
-
-                options = question.get("options", [])
-
-                st.markdown(
-                    f"**Q{index + 1}. {question_text}**"
-                )
-
-                if options:
-
-                    answer = st.radio(
-                        "Choose your answer",
-                        options,
-                        key=f"quiz_answer_{index}",
-                        index=None
-                    )
-
-                    st.session_state.quiz_answers[index] = answer
-
-                st.write("")
-
-            submitted = st.form_submit_button(
-                "Submit Quiz",
-                use_container_width=True
-            )
-
-            if submitted:
-
-                st.session_state.quiz_submitted = True
-                st.rerun()
-
-    else:
-
-        score = 0
-        total = len(questions)
-
-        for index, question in enumerate(questions):
-
-            correct_answer = question.get(
-                "answer",
-                question.get("correct_answer", "")
-            )
-
-            user_answer = st.session_state.quiz_answers.get(index)
-
-            if user_answer == correct_answer:
-                score += 1
-
-        percentage = score / total * 100 if total else 0
-
-        st.markdown("## 🏆 Quiz Result")
-
-        col1, col2, col3 = st.columns(3)
-
-        col1.metric("Correct Answers", f"{score}/{total}")
-        col2.metric("Percentage", f"{percentage:.1f}%")
-
-        col3.metric(
-            "Performance",
-            "Excellent" if percentage >= 80
-            else "Good" if percentage >= 60
-            else "Keep Practising"
-        )
-
-        st.progress(percentage / 100)
-
-        st.divider()
-
-        st.subheader("📋 Answer Review")
-
-        for index, question in enumerate(questions):
-
-            correct_answer = question.get(
-                "answer",
-                question.get("correct_answer", "")
-            )
-
-            user_answer = st.session_state.quiz_answers.get(index)
-
-            st.markdown(
-                f"**Q{index + 1}. {question.get('question', '')}**"
-            )
-
-            st.write(f"Your answer: {user_answer or 'Not answered'}")
-            st.write(f"Correct answer: {correct_answer}")
-
-            if user_answer == correct_answer:
-                st.success("Correct answer!")
-            else:
-                st.error("Incorrect answer.")
-
-            explanation = question.get("explanation")
-
-            if explanation:
-                st.info(f"Explanation: {explanation}")
-
-            st.divider()
-
-        if st.button("🔄 Try Again", key="try_again"):
-
-            st.session_state.quiz_submitted = False
-            st.session_state.quiz_answers = {}
-
-            st.rerun()
-
-
-# =========================================
-# CAREER ROADMAP
-# =========================================
-
-def career_roadmap_page():
-
-    back_to_home()
-
-    st.title("🚀 Career Roadmap")
-
-    st.write(
-        "Discover your career path and follow a structured learning plan."
-    )
-
-    st.markdown("""
-    <div class="section-card">
-        <h3>🎯 Build Your Future</h3>
-        <p>
-            Select your career category, enter your goal and choose
-            your current level. StudyMate AI will create a roadmap
-            with skills, projects, tools and a portfolio checklist.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # CATEGORY
-
-    selected_category = st.selectbox(
-        "Select Career Category",
-        CAREER_CATEGORIES,
-        key="career_category"
-    )
-
-    # DYNAMIC EXAMPLES
-
-    selected_examples = CAREER_EXAMPLES.get(
-        selected_category,
-        CAREER_EXAMPLES.get("Auto-detect", [])
-    )
-
-    if selected_examples:
-
-        st.caption(
-            "Career examples: " + " • ".join(selected_examples)
-        )
-
-        example_text = " or ".join(selected_examples[:2])
-
-    else:
-
-        example_text = "your desired career"
-
-    # CAREER GOAL
-
-    career_goal = st.text_input(
-        "Enter Your Career Goal",
-        placeholder=f"Example: {example_text}",
-        key="career_goal"
-    )
-
-    # LEVEL
-
-    roadmap_level = st.selectbox(
-        "Your Current Level",
-        ["Beginner", "Intermediate", "Advanced"],
-        key="career_level"
-    )
-
-    st.write("")
-
-    # GENERATE ROADMAP
-
-    if st.button(
-        "🚀 Generate My Career Roadmap",
-        key="generate_roadmap_button"
-    ):
-
-        if not career_goal.strip():
-
-            st.warning("Please enter your career goal.")
-
-        else:
-
-            is_valid, detected_category = validate_career_goal(
-                career_goal,
-                selected_category
-            )
-
-            if not is_valid:
-
-                st.session_state.roadmap_result = ""
-                st.session_state.roadmap_config = {}
-
-                st.error(
-                    f"Your selected category is {selected_category}, "
-                    f"but this career belongs to {detected_category}."
-                )
-
-                st.warning(
-                    f"Please select {detected_category} "
-                    "or enter a career related to your selected category."
-                )
-
-            else:
-
-                try:
-
-                    with st.spinner(
-                        "Generating your career roadmap..."
-                    ):
-
-                        result = generate_roadmap(
-                            career_goal,
-                            selected_category,
-                            roadmap_level
-                        )
-
-                        st.session_state.roadmap_result = result
-
-                        st.session_state.roadmap_config = {
-                            "career_goal": career_goal,
-                            "category": (
-                                detected_category
-                                if selected_category == "Auto-detect"
-                                else selected_category
-                            ),
-                            "level": roadmap_level,
+                        st.session_state.generated_notes = result
+                        st.session_state.notes_config = {
+                            "subject": subject,
+                            "level": level,
+                            "topic": topic,
                         }
 
-                except Exception as error:
+                    except Exception as error:
+                        st.error(
+                            f"Error type: {type(error).__name__}"
+                        )
+                        st.exception(error)
 
-                    st.error(f"Roadmap error: {error}")
+        if st.session_state.generated_notes:
 
-    # DISPLAY ROADMAP
+            st.markdown("### 📄 Generated Notes")
+            st.markdown(st.session_state.generated_notes)
 
-    if st.session_state.roadmap_result:
+            config = st.session_state.notes_config
 
-        st.divider()
-
-        roadmap_text = st.session_state.roadmap_result
-
-        checklist_pattern = (
-            r"(?ms)^##\s*🏆\s*Portfolio Checklist\s*\n"
-            r"(.*?)(?=^##\s|\Z)"
-        )
-
-        checklist_match = re.search(
-            checklist_pattern,
-            roadmap_text
-        )
-
-        if checklist_match:
-
-            checklist_section = checklist_match.group(1)
-
-            checklist_items = re.findall(
-                r"^\s*-\s*\[\s*\]\s*(.+)$",
-                checklist_section,
-                re.MULTILINE
-            )
-
-            before_checklist = roadmap_text[:checklist_match.start()]
-            after_checklist = roadmap_text[checklist_match.end():]
-
-            st.markdown(before_checklist)
-
-            st.markdown("## 🏆 Portfolio Checklist")
-
-            st.caption(
-                "Click each checkbox when you complete a task."
-            )
-
-            safe_goal = re.sub(
-                r"[^a-zA-Z0-9]+",
-                "_",
-                st.session_state.roadmap_config.get(
-                    "career_goal",
-                    "career"
-                )
-            ).strip("_").lower()
-
-            completed = 0
-
-            for index, item in enumerate(checklist_items):
-
-                checked = st.checkbox(
-                    item,
-                    key=f"portfolio_{safe_goal}_{index}"
-                )
-
-                if checked:
-                    completed += 1
-
-            total_items = len(checklist_items)
-
-            if total_items:
-
-                progress = completed / total_items
-
-                st.progress(progress)
-
-                st.caption(
-                    f"Portfolio Progress: "
-                    f"{completed}/{total_items} tasks completed"
-                )
-
-            st.markdown(after_checklist)
-
-        else:
-
-            st.markdown(roadmap_text)
-
-            st.warning(
-                "The portfolio checklist heading was not found. "
-                "The roadmap is still displayed normally."
-            )
-
-        # DOWNLOAD OPTIONS
-
-        st.divider()
-
-        st.subheader("📥 Download Your Roadmap")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-
-            st.download_button(
-                "⬇️ Download Markdown",
-                data=roadmap_text,
-                file_name="Career_Roadmap.md",
-                mime="text/markdown",
-                use_container_width=True
-            )
-
-        with col2:
-
-            try:
-
-                pdf_file = generate_notes_pdf(
-                    roadmap_text,
-                    "Career Roadmap",
-                    st.session_state.roadmap_config.get(
-                        "level",
-                        "Beginner"
-                    ),
-                    st.session_state.roadmap_config.get(
-                        "career_goal",
-                        "Career"
+            if config:
+                try:
+                    pdf_file = generate_notes_pdf(
+                        st.session_state.generated_notes,
+                        config["subject"],
+                        config["level"],
+                        config["topic"]
                     )
-                )
 
-                if pdf_file:
+                    safe_topic = re.sub(
+                        r"[^a-zA-Z0-9_-]",
+                        "_",
+                        config["topic"]
+                    )
 
                     st.download_button(
-                        "📄 Download PDF",
+                        "⬇️ Download Notes as PDF",
                         data=pdf_file,
-                        file_name="Career_Roadmap.pdf",
+                        file_name=f"{safe_topic}_notes.pdf",
                         mime="application/pdf",
                         use_container_width=True
                     )
 
-            except Exception as error:
+                except Exception as error:
+                    st.error("Could not create the PDF.")
+                    st.exception(error)
 
-                st.warning(f"PDF generation issue: {error}")
+    # -------------------------------------
+    # GENERATE QUIZ
+    # -------------------------------------
+
+    elif selected_mode == "Generate Quiz":
+
+        if st.button("🧠 Generate Quiz", use_container_width=True):
+
+            if not subject.strip() or not topic.strip():
+                st.warning("Please enter both subject and topic.")
+
+            else:
+                with st.spinner("Preparing your quiz..."):
+
+                    try:
+                        questions = get_quiz_questions(
+                            subject,
+                            level,
+                            topic
+                        )
+
+                        st.session_state.quiz_questions = questions
+                        st.session_state.quiz_submitted = False
+                        st.session_state.quiz_config = {
+                            "subject": subject,
+                            "level": level,
+                            "topic": topic,
+                        }
+
+                    except Exception as error:
+                        st.error(
+                            f"Error type: {type(error).__name__}"
+                        )
+                        st.exception(error)
+
+        questions = st.session_state.quiz_questions
+
+        if questions:
+
+            st.markdown("### 📝 Your Quiz")
+
+            if not st.session_state.quiz_submitted:
+
+                with st.form("quiz_form"):
+
+                    for index, question in enumerate(questions):
+
+                        question_text = question.get(
+                            "question",
+                            f"Question {index + 1}"
+                        )
+
+                        st.markdown(
+                            f"**Q{index + 1}. {question_text}**"
+                        )
+
+                        options = question.get("options", [])
+
+                        st.radio(
+                            "Choose your answer",
+                            options,
+                            key=f"quiz_answer_{index}",
+                            index=None
+                        )
+
+                        st.markdown("---")
+
+                    submitted = st.form_submit_button(
+                        "Submit Quiz",
+                        use_container_width=True
+                    )
+
+                    if submitted:
+                        st.session_state.quiz_submitted = True
+                        st.rerun()
+
+            else:
+
+                score = 0
+
+                for index, question in enumerate(questions):
+
+                    correct_answer = question.get("answer")
+                    selected_answer = st.session_state.get(
+                        f"quiz_answer_{index}"
+                    )
+
+                    if selected_answer == correct_answer:
+                        score += 1
+
+                total = len(questions)
+
+                st.metric(
+                    "Your Score",
+                    f"{score} / {total}"
+                )
+
+                if total:
+                    st.progress(score / total)
+
+                if score == total:
+                    st.success("Excellent! You got every answer correct.")
+                elif score >= total / 2:
+                    st.info("Good effort! Keep practising.")
+                else:
+                    st.warning("Keep learning and try again.")
+
+                st.markdown("### Answer Review")
+
+                for index, question in enumerate(questions):
+
+                    selected_answer = st.session_state.get(
+                        f"quiz_answer_{index}"
+                    )
+
+                    correct_answer = question.get("answer")
+
+                    st.markdown(
+                        f"**Q{index + 1}. {question.get('question', '')}**"
+                    )
+
+                    st.write(f"Your answer: {selected_answer}")
+                    st.write(f"Correct answer: {correct_answer}")
+
+                    explanation = question.get("explanation")
+
+                    if explanation:
+                        st.caption(explanation)
+
+                    if selected_answer == correct_answer:
+                        st.success("Correct")
+                    else:
+                        st.error("Incorrect")
+
+                    st.markdown("---")
+
+                if st.button("🔄 Try Again", use_container_width=True):
+
+                    for index in range(total):
+                        key = f"quiz_answer_{index}"
+
+                        if key in st.session_state:
+                            del st.session_state[key]
+
+                    st.session_state.quiz_submitted = False
+                    st.session_state.quiz_questions = []
+                    st.rerun()
 
 
 # =========================================
@@ -997,13 +711,12 @@ def career_roadmap_page():
 
 def chat_tutor():
 
-    back_to_home()
-
-    st.title("💬 Chat Tutor")
-
-    st.write(
-        "Ask questions, understand concepts and learn step by step."
+    page_header(
+        "🤖 Chat Tutor",
+        "Ask questions and learn with your AI study companion."
     )
+
+    st.markdown("### Start a Conversation")
 
     for message in st.session_state.chat_history:
 
@@ -1011,14 +724,14 @@ def chat_tutor():
             st.markdown(message["content"])
 
     user_prompt = st.chat_input(
-        "Ask your study question..."
+        "Ask anything about your studies..."
     )
 
     if user_prompt:
 
         st.session_state.chat_history.append({
             "role": "user",
-            "content": user_prompt
+            "content": user_prompt,
         })
 
         with st.chat_message("user"):
@@ -1029,39 +742,165 @@ def chat_tutor():
             with st.spinner("Thinking..."):
 
                 try:
-
-                    response = generate_chat_response(user_prompt)
-
-                    if not isinstance(response, str):
-                        response = str(response)
+                    response = generate_chat_response(
+                        user_prompt,
+                        st.session_state.chat_history[:-1]
+                    )
 
                     st.markdown(response)
 
                     st.session_state.chat_history.append({
                         "role": "assistant",
-                        "content": response
+                        "content": response,
                     })
 
                 except Exception as error:
-
-                    error_message = (
-                        f"Unable to generate a response: {error}"
+                    st.error(
+                        f"Error type: {type(error).__name__}"
                     )
-
-                    st.error(error_message)
-
-                    st.session_state.chat_history.append({
-                        "role": "assistant",
-                        "content": error_message
-                    })
+                    st.exception(error)
 
     if st.session_state.chat_history:
 
-        if st.button("🗑️ Clear Chat", key="clear_chat"):
-
+        if st.button("🗑️ Clear Chat History"):
             st.session_state.chat_history = []
-
             st.rerun()
+
+
+# =========================================
+# CAREER ROADMAP
+# =========================================
+
+def career_roadmap_page():
+
+    page_header(
+        "🚀 Career Roadmap",
+        "Create a learning roadmap for your future career."
+    )
+
+    st.markdown("### Choose Your Career Category")
+
+    categories = list(CAREER_CATEGORIES)
+
+    selected_category = st.selectbox(
+        "Select your stream",
+        categories
+    )
+
+    selected_examples = CAREER_EXAMPLES.get(
+        selected_category,
+        []
+    )
+
+    if selected_examples:
+        example_text = ", ".join(
+            str(example) for example in selected_examples[:2]
+        )
+    else:
+        example_text = "Example: Your preferred career"
+
+    career_goal = st.text_input(
+        "Enter your career goal",
+        placeholder=example_text
+    )
+
+    roadmap_level = st.selectbox(
+        "Your current level",
+        ["Beginner", "Intermediate", "Advanced"]
+    )
+
+    if st.button(
+        "Generate My Career Roadmap",
+        use_container_width=True
+    ):
+
+        if not career_goal.strip():
+            st.warning("Please enter a career goal.")
+
+        else:
+
+            is_valid, detected_stream = validate_career_goal(
+                career_goal,
+                selected_category
+            )
+
+            if not is_valid:
+
+                st.session_state.roadmap_result = ""
+
+                st.error(
+                    f"Your selected stream is {selected_category}, "
+                    f"but this career belongs to {detected_stream}."
+                )
+
+                st.warning(
+                    f"Please select {detected_stream} or enter a career "
+                    "related to your selected stream."
+                )
+
+            else:
+
+                with st.spinner("Building your career roadmap..."):
+
+                    try:
+                        result = generate_roadmap(
+                            career_goal,
+                            selected_category,
+                            roadmap_level
+                        )
+
+                        st.session_state.roadmap_result = result
+                        st.session_state.roadmap_goal = career_goal
+                        st.session_state.roadmap_category = selected_category
+
+                    except Exception as error:
+                        st.error(
+                            f"Error type: {type(error).__name__}"
+                        )
+                        st.exception(error)
+
+    if st.session_state.roadmap_result:
+
+        st.markdown("---")
+        st.markdown("### 🎯 Your Career Roadmap")
+
+        st.markdown(st.session_state.roadmap_result)
+
+        roadmap_text = st.session_state.roadmap_result
+
+        safe_goal = re.sub(
+            r"[^a-zA-Z0-9_-]",
+            "_",
+            st.session_state.roadmap_goal
+        )
+
+        st.download_button(
+            "⬇️ Download Roadmap as Markdown",
+            data=roadmap_text,
+            file_name=f"{safe_goal}_roadmap.md",
+            mime="text/markdown",
+            use_container_width=True
+        )
+
+        try:
+            roadmap_pdf = generate_notes_pdf(
+                roadmap_text,
+                "Career Roadmap",
+                roadmap_level,
+                st.session_state.roadmap_goal
+            )
+
+            st.download_button(
+                "📄 Download Roadmap as PDF",
+                data=roadmap_pdf,
+                file_name=f"{safe_goal}_roadmap.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+
+        except Exception as error:
+            st.warning("The Markdown download is available, but PDF creation failed.")
+            st.caption(str(error))
 
 
 # =========================================
@@ -1070,70 +909,60 @@ def chat_tutor():
 
 def about_page():
 
-    back_to_home()
-
-    st.title("ℹ️ About StudyMate AI")
+    page_header(
+        "ℹ️ About StudyMate AI",
+        "Your personal AI-powered study companion."
+    )
 
     st.markdown("""
-    <div class="section-card">
-        <h2>🎓 StudyMate AI</h2>
-        <p>
-            StudyMate AI is a learning assistant designed to help students
-            understand concepts, create notes, practise quizzes and explore
-            career opportunities.
-        </p>
+    ## 🎓 What is StudyMate AI?
+
+    StudyMate AI is designed to make learning easier, smarter and more
+    organised with the help of artificial intelligence.
+
+    ## ✨ Main Features
+
+    - **Learning Studio:** Understand difficult topics in simple language.
+    - **AI Notes Generator:** Create structured notes for your subjects.
+    - **PDF Downloads:** Save your notes for offline study.
+    - **Interactive Quiz:** Test your knowledge and review your answers.
+    - **Chat Tutor:** Ask questions and get learning support.
+    - **Career Roadmap:** Explore career paths and plan your learning journey.
+
+    ## 🎯 Our Goal
+
+    To help students learn independently, improve their knowledge and
+    prepare for their future careers.
+
+    ---
+
+    <div style="text-align:center; color:#aab3d0;">
+        Made with 💜 for students.
     </div>
     """, unsafe_allow_html=True)
 
-    st.subheader("✨ Features")
-
-    features = [
-        "📖 Learning Studio – Learn and understand topics.",
-        "📝 Notes Generator – Create structured study notes.",
-        "📄 PDF Downloads – Save notes and roadmaps.",
-        "🧠 Interactive Quiz – Test your knowledge.",
-        "💬 Chat Tutor – Ask questions and get explanations.",
-        "🚀 Career Roadmap – Plan your future career.",
-        "🏆 Portfolio Checklist – Track completed career tasks.",
-    ]
-
-    for feature in features:
-        st.markdown(f"- {feature}")
-
-    st.divider()
-
-    st.caption(
-        "StudyMate AI | Learn smarter. Build better. Grow faster."
-    )
-
 
 # =========================================
-# MAIN APP ROUTER
+# MAIN PAGE ROUTER
 # =========================================
 
-page = st.session_state.current_page
+current_page = st.session_state.current_page
 
-if page == "Dashboard":
-
+if current_page == "Dashboard":
     dashboard()
 
-elif page == "Learning Studio":
-
+elif current_page == "Learning Studio":
     learning_studio()
 
-elif page == "Career Roadmap":
-
-    career_roadmap_page()
-
-elif page == "Chat Tutor":
-
+elif current_page == "Chat Tutor":
     chat_tutor()
 
-elif page == "About":
+elif current_page == "Career Roadmap":
+    career_roadmap_page()
 
+elif current_page == "About":
     about_page()
 
 else:
-
     st.session_state.current_page = "Dashboard"
     st.rerun()
